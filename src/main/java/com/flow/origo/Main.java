@@ -14,17 +14,14 @@ public class Main {
         List<String> listOfPages;
         List<DataObject> objectList = new ArrayList<>();
 
-        try {
-            listOfPages = listGetter(args[0].toLowerCase());
-            for (String link: listOfPages) {
-                try {
-                    objectList.add(pageParser(link));
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+
+        listOfPages = listGetter(args[0].toLowerCase());
+        for (String link : listOfPages) {
+            try {
+                objectList.add(pageParser(link));
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         // single case test

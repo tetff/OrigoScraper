@@ -68,9 +68,14 @@ public class HTMLParser {
 
     }
 
-    public static List<String> listGetter(String tag) throws IOException {
+    public static List<String> listGetter(String tag) {
         List<String> pageList = new ArrayList<>();
-        Document conn = Jsoup.connect("http://cimkezes.origo.hu/cimkek/" + tag + "/index.html").get();
+        Document conn = null;
+        try {
+            conn = Jsoup.connect("http://cimkezes.origo.hu/cimkek/" + tag + "/index.html").get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Element header = conn.getElementById("wrap-left").getElementsByClass("top-item").first().getElementsByTag("a").first();
         pageList.add(header.attr("href"));
         List<Element> linkList = new ArrayList<>(conn.getElementById("wrap-main").getElementsByClass("news-title"));
@@ -80,15 +85,23 @@ public class HTMLParser {
         }
 
         int osc = 10;
-        Document extConn = Jsoup.connect("http://cimkezes.origo.hu/cimkek/" + tag + "/index.html?tag=" + tag + "&hits=10&offset=" + osc).get();
-
+        Document extConn = null;
+        try {
+            extConn = Jsoup.connect("http://cimkezes.origo.hu/cimkek/" + tag + "/index.html?tag=" + tag + "&hits=10&offset=" + osc).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         while (!(extConn.getElementById("wrap-main").selectFirst("p").text().contains("Az Ön által megadott"))) {
             List<Element> extList = new ArrayList<>(extConn.getElementById("wrap-main").getElementsByClass("news-title"));
             for (Element extLink: extList) {
                 pageList.add(extLink.attr("href"));
             }
             osc += 10;
-            extConn = Jsoup.connect("http://cimkezes.origo.hu/cimkek/" + tag + "/index.html?tag=" + tag + "&hits=10&offset=" + osc).get();
+            try {
+                extConn = Jsoup.connect("http://cimkezes.origo.hu/cimkek/" + tag + "/index.html?tag=" + tag + "&hits=10&offset=" + osc).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return pageList;
     }
