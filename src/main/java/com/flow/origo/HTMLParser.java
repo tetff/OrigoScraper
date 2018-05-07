@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HTMLParser {
-    public static DataObject pageParser(String page) throws IOException {
-        Document data = null;
+    public Article pageParser(String page) throws IOException {
+        Document data;
         String title;
         String author;
         String pubDate;
@@ -20,7 +20,7 @@ public class HTMLParser {
         StringBuilder contentBuild = new StringBuilder();
         StringBuilder additionalTagsBuild = new StringBuilder();
 
-        DataObject object;
+        Article object;
 
         data = Jsoup.connect(page).get();
 
@@ -39,7 +39,7 @@ public class HTMLParser {
         try {
             pubDate = data.getElementById("article-date").text();
         } catch (Exception e) {
-            pubDate = "1000-01-01 00:00";
+            pubDate = "1000.01.01. 00:00";
         }
 
         try {
@@ -63,16 +63,16 @@ public class HTMLParser {
         }
 
 
-        object = new DataObject(title, author, pubDate, additionalTags, content);
+        object = new Article(title, author, pubDate, additionalTags, content);
         return object;
 
     }
 
-    public static List<String> listGetter(String tag) {
+    public List<String> articleListGetter(String tag) {
         List<String> pageList = new ArrayList<>();
         Document conn = null;
         try {
-            conn = Jsoup.connect("http://cimkezes.origo.hu/cimkek/" + tag + "/index.html").get();
+            conn = Jsoup.connect("http://cimkezes.origo.hu/cimkek/" + removeAccents(tag) + "/index.html").get();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -87,7 +87,7 @@ public class HTMLParser {
         int osc = 10;
         Document extConn = null;
         try {
-            extConn = Jsoup.connect("http://cimkezes.origo.hu/cimkek/" + tag + "/index.html?tag=" + tag + "&hits=10&offset=" + osc).get();
+            extConn = Jsoup.connect("http://cimkezes.origo.hu/cimkek/" + removeAccents(tag) + "/index.html?tag=" + replaceAccents(tag) + "&hits=10&offset=" + osc).get();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -98,11 +98,42 @@ public class HTMLParser {
             }
             osc += 10;
             try {
-                extConn = Jsoup.connect("http://cimkezes.origo.hu/cimkek/" + tag + "/index.html?tag=" + tag + "&hits=10&offset=" + osc).get();
+                extConn = Jsoup.connect("http://cimkezes.origo.hu/cimkek/" + removeAccents(tag) + "/index.html?tag=" + replaceAccents(tag) + "&hits=10&offset=" + osc).get();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return pageList;
+    }
+
+
+    public String removeAccents(String in) {
+        return in
+                .replace(" ","-")
+                .replace("á","a")
+                .replace("é","e")
+                .replace("í","i")
+                .replace("ó","o")
+                .replace("ö","o")
+                .replace("ő","o")
+                .replace("ú","u")
+                .replace("ü","u")
+                .replace("ű","u");
+    }
+
+    public String replaceAccents(String in) {
+        return in
+                .replace(" ","%20")
+                .replace(".",".+")
+                .replace(":","%3A")
+                .replace("á","%E1")
+                .replace("é","%E9")
+                .replace("í","%ED")
+                .replace("ó","%F3")
+                .replace("ö","%F6")
+                .replace("ő","%F5")
+                .replace("ú","%FA")
+                .replace("ü","%FC")
+                .replace("ű","%FB");
     }
 }

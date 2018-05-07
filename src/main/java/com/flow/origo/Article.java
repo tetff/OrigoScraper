@@ -1,13 +1,13 @@
 package com.flow.origo;
 
-public class DataObject {
+public class Article {
     private String title;
     private String author;
     private String date;
     private String additionalTags;
     private String content;
 
-    public DataObject(String title, String author, String date, String additionalTags, String content) {
+    public Article(String title, String author, String date, String additionalTags, String content) {
         this.title = title;
         this.author = author;
         this.date = date;
@@ -41,7 +41,7 @@ public class DataObject {
 
     @Override
     public String toString() {
-        return "DataObject{" +
+        return "Article{" +
                 "title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", date='" + date + '\'' +

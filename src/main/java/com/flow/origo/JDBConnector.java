@@ -7,8 +7,9 @@ public class JDBConnector {
     // JDBC driver name and database URL
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost";
+    private HTMLParser htmlParser = new HTMLParser();
 
-    public static void jdbcHandler(List<DataObject> objectList, String tag) {
+    public void jdbcHandler(List<Article> objectList, String tag) {
         Connection conn = null;
         Statement stmt = null;
         try {
@@ -30,10 +31,10 @@ public class JDBConnector {
             stmt = conn.createStatement();
 
 
-            String deleteTable = "DROP TABLE IF EXISTS `" + tag + "`;";
+            String deleteTable = "DROP TABLE IF EXISTS `" + htmlParser.removeAccents(tag) + "`;";
             stmt.executeUpdate(deleteTable);
 
-            String createTable = "CREATE TABLE `" + tag + "` (" +
+            String createTable = "CREATE TABLE `" + htmlParser.removeAccents(tag) + "` (" +
                     "  `title` MEDIUMTEXT NULL," +
                     "  `author` VARCHAR(255) NULL," +
                     "  `date` DATETIME NULL," +
@@ -49,8 +50,8 @@ public class JDBConnector {
 
         String createRow = "";
 
-        for (DataObject object : objectList) {
-            createRow = "INSERT INTO " + tag + " VALUES (" +
+        for (Article object : objectList) {
+            createRow = "INSERT INTO " + htmlParser.removeAccents(tag) + " VALUES (" +
                     "'" + object.getTitle() + "', " +
                     "'" + object.getAuthor() + "', " +
                     "'" + object.getDate() + "', " +
